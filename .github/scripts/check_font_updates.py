@@ -17,21 +17,29 @@ def get_latest_release(repo):
     api_url = f"https://api.github.com/repos/{repo}/releases/latest"
     
     try:
+        print(f"正在获取 {repo} 的最新发布版本...")
         response = requests.get(api_url, timeout=30)
         response.raise_for_status()
-        return response.json()
+        release_data = response.json()
+        print(f"成功获取发布版本: {release_data.get('tag_name', 'unknown')}")
+        return release_data
     except requests.RequestException as e:
         print(f"获取最新发布版本失败: {e}")
+        print(f"API URL: {api_url}")
         return None
 
 
 def find_font_asset(release, font_name):
     """在发布版本中查找指定的字体文件"""
     if not release or 'assets' not in release:
+        print(f"发布版本中没有assets信息")
         return None
     
+    print(f"在 {len(release['assets'])} 个资源中查找字体文件: {font_name}")
     for asset in release['assets']:
+        print(f"  检查资源: {asset['name']}")
         if asset['name'] == font_name:
+            print(f"  找到匹配的字体文件: {asset['name']}")
             return {
                 'name': asset['name'],
                 'download_url': asset['browser_download_url'],
@@ -39,6 +47,10 @@ def find_font_asset(release, font_name):
                 'download_count': asset['download_count']
             }
     
+    print(f"未找到字体文件: {font_name}")
+    print("可用的资源文件:")
+    for asset in release['assets']:
+        print(f"  - {asset['name']}")
     return None
 
 
@@ -81,6 +93,15 @@ def main():
     
     if not release_info:
         print(f"无法获取 {args.repo} 的发布信息")
+        sys.exit(1)
+    
+    # 验证字体信息
+    if 'font' not in release_info or not release_info['font']:
+        print(f"错误: 未找到字体信息")
+        sys.exit(1)
+    
+    if 'download_url' not in release_info['font'] or not release_info['font']['download_url']:
+        print(f"错误: 未找到下载链接")
         sys.exit(1)
     
     # 保存到JSON文件

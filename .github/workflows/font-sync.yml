@@ -94,15 +94,25 @@ jobs:
         # 下载LXGWNeoZhiSong
         if [ "${{ steps.check-updates.outputs.zhisong_updated }}" == "true" ]; then
           echo "下载LXGWNeoZhiSong字体..."
-          ZHISONG_URL=$(jq -r '.download_url' .github/scripts/zhisong_latest.json)
-          wget -O temp_fonts/LXGWNeoZhiSongPlus.ttf "$ZHISONG_URL"
+          ZHISONG_URL=$(jq -r '.font.download_url' .github/scripts/zhisong_latest.json)
+          if [ "$ZHISONG_URL" != "null" ] && [ -n "$ZHISONG_URL" ]; then
+            wget -O temp_fonts/LXGWNeoZhiSongPlus.ttf "$ZHISONG_URL"
+          else
+            echo "错误: 无法获取LXGWNeoZhiSong下载链接"
+            exit 1
+          fi
         fi
         
         # 下载LXGWNeoXiHei
         if [ "${{ steps.check-updates.outputs.xihei_updated }}" == "true" ]; then
           echo "下载LXGWNeoXiHei字体..."
-          XIHEI_URL=$(jq -r '.download_url' .github/scripts/xihei_latest.json)
-          wget -O temp_fonts/LXGWNeoXiHeiPlus.ttf "$XIHEI_URL"
+          XIHEI_URL=$(jq -r '.font.download_url' .github/scripts/xihei_latest.json)
+          if [ "$XIHEI_URL" != "null" ] && [ -n "$XIHEI_URL" ]; then
+            wget -O temp_fonts/LXGWNeoXiHeiPlus.ttf "$XIHEI_URL"
+          else
+            echo "错误: 无法获取LXGWNeoXiHei下载链接"
+            exit 1
+          fi
         fi
         
         # 转换为WOFF2格式
