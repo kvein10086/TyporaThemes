@@ -7,6 +7,10 @@ on:
   workflow_dispatch:
     # 允许手动触发
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   check-font-updates:
     runs-on: ubuntu-latest
@@ -147,8 +151,9 @@ jobs:
     - name: 提交更新
       if: steps.check-updates.outputs.zhisong_updated == 'true' || steps.check-updates.outputs.xihei_updated == 'true'
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        # 配置 Git 用户信息
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
         
         # 添加更新的文件
         git add dissertation/font/*.woff2 font_versions.json
@@ -168,8 +173,16 @@ jobs:
             COMMIT_MSG="$COMMIT_MSG\n- LXGWNeoXiHei: ${{ steps.check-updates.outputs.latest_xihei }}"
           fi
           
+          echo "提交信息: $COMMIT_MSG"
           git commit -m "$COMMIT_MSG"
-          git push
+          
+          # 尝试推送，如果失败则输出错误信息
+          if ! git push; then
+            echo "推送失败，请检查权限设置"
+            echo "当前分支: $(git branch --show-current)"
+            echo "远程仓库: $(git remote -v)"
+            exit 1
+          fi
         fi
     
     - name: 清理临时文件
