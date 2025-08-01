@@ -1,0 +1,11 @@
+@charset "UTF-8";
+@import "./dissertation/basic/include.css";
+@import "./dissertation/dark/basic-dark-config.css";
+
+:root {
+  /* Novel Tex Full Dark */
+  --bg-color: rgb(34, 34, 34);
+  --sidebar-bg-color: var(--bg-color);
+
+  --li-code-bg-color: rgb(73, 73, 73);
+}

@@ -1,0 +1,19 @@
+@import "./code-dark.css";
+
+:root {
+  --text-color: rgb(220, 220, 220);
+  --strong-text-color: rgb(255, 255, 255);
+  --title-text-color: rgb(240, 240, 240);
+
+  --link-color: rgb(150, 200, 255);
+  
+  /* 表格文字颜色 - 确保在深色背景下清晰可见 */
+  --table-text-color: rgb(240, 240, 240);
+  
+  /* 代码块相关颜色 */
+  --code-font-color: rgb(240, 240, 240);
+  --bg-color: rgb(34, 34, 34);
+  --border-color: rgb(100, 100, 100);
+  --bg-color-shader: rgb(50, 50, 50);
+  --select-text-bg-color: rgb(60, 60, 60);
+}

@@ -1,0 +1,169 @@
+name: 字体同步更新
+
+on:
+  schedule:
+    # 每天凌晨2点检查更新
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    # 允许手动触发
+
+jobs:
+  check-font-updates:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: 设置Python环境
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: 安装依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r .github/scripts/requirements.txt
+    
+    - name: 检查LXGWNeoZhiSong更新
+      id: check-zhisong
+      run: |
+        python .github/scripts/check_font_updates.py \
+          --repo lxgw/LxgwNeoZhiSong \
+          --font-name "LXGWNeoZhiSongPlus.ttf" \
+          --output-file .github/scripts/zhisong_latest.json
+    
+    - name: 检查LXGWNeoXiHei更新
+      id: check-xihei
+      run: |
+        python .github/scripts/check_font_updates.py \
+          --repo lxgw/LxgwNeoXiHei \
+          --font-name "LXGWNeoXiHeiPlus.ttf" \
+          --output-file .github/scripts/xihei_latest.json
+    
+    - name: 检查是否有更新
+      id: check-updates
+      run: |
+        # 读取当前版本信息
+        if [ -f "font_versions.json" ]; then
+          CURRENT_ZHISONG=$(jq -r '.zhisong.version' font_versions.json 2>/dev/null || echo "unknown")
+          CURRENT_XIHEI=$(jq -r '.xihei.version' font_versions.json 2>/dev/null || echo "unknown")
+        else
+          CURRENT_ZHISONG="unknown"
+          CURRENT_XIHEI="unknown"
+        fi
+        
+        # 读取最新版本信息
+        LATEST_ZHISONG=$(jq -r '.version' .github/scripts/zhisong_latest.json)
+        LATEST_XIHEI=$(jq -r '.version' .github/scripts/xihei_latest.json)
+        
+        echo "当前版本:"
+        echo "  LXGWNeoZhiSong: $CURRENT_ZHISONG"
+        echo "  LXGWNeoXiHei: $CURRENT_XIHEI"
+        echo "最新版本:"
+        echo "  LXGWNeoZhiSong: $LATEST_ZHISONG"
+        echo "  LXGWNeoXiHei: $LATEST_XIHEI"
+        
+        # 检查是否有更新
+        ZHISONG_UPDATED=false
+        XIHEI_UPDATED=false
+        
+        if [ "$CURRENT_ZHISONG" != "$LATEST_ZHISONG" ]; then
+          ZHISONG_UPDATED=true
+          echo "发现LXGWNeoZhiSong更新: $CURRENT_ZHISONG -> $LATEST_ZHISONG"
+        fi
+        
+        if [ "$CURRENT_XIHEI" != "$LATEST_XIHEI" ]; then
+          XIHEI_UPDATED=true
+          echo "发现LXGWNeoXiHei更新: $CURRENT_XIHEI -> $LATEST_XIHEI"
+        fi
+        
+        # 设置输出变量
+        echo "zhisong_updated=$ZHISONG_UPDATED" >> $GITHUB_OUTPUT
+        echo "xihei_updated=$XIHEI_UPDATED" >> $GITHUB_OUTPUT
+        echo "latest_zhisong=$LATEST_ZHISONG" >> $GITHUB_OUTPUT
+        echo "latest_xihei=$LATEST_XIHEI" >> $GITHUB_OUTPUT
+    
+    - name: 下载并转换字体
+      if: steps.check-updates.outputs.zhisong_updated == 'true' || steps.check-updates.outputs.xihei_updated == 'true'
+      run: |
+        mkdir -p temp_fonts
+        
+        # 下载LXGWNeoZhiSong
+        if [ "${{ steps.check-updates.outputs.zhisong_updated }}" == "true" ]; then
+          echo "下载LXGWNeoZhiSong字体..."
+          ZHISONG_URL=$(jq -r '.download_url' .github/scripts/zhisong_latest.json)
+          wget -O temp_fonts/LXGWNeoZhiSongPlus.ttf "$ZHISONG_URL"
+        fi
+        
+        # 下载LXGWNeoXiHei
+        if [ "${{ steps.check-updates.outputs.xihei_updated }}" == "true" ]; then
+          echo "下载LXGWNeoXiHei字体..."
+          XIHEI_URL=$(jq -r '.download_url' .github/scripts/xihei_latest.json)
+          wget -O temp_fonts/LXGWNeoXiHeiPlus.ttf "$XIHEI_URL"
+        fi
+        
+        # 转换为WOFF2格式
+        echo "转换字体格式..."
+        for font in temp_fonts/*.ttf; do
+          if [ -f "$font" ]; then
+            fontname=$(basename "$font" .ttf)
+            echo "转换 $fontname.ttf 为 $fontname.woff2"
+            python .github/scripts/convert_font.py "$font" "dissertation/font/$fontname.woff2"
+          fi
+        done
+    
+    - name: 更新版本信息
+      if: steps.check-updates.outputs.zhisong_updated == 'true' || steps.check-updates.outputs.xihei_updated == 'true'
+      run: |
+        # 创建新的版本信息
+        cat > font_versions.json << EOF
+        {
+          "zhisong": {
+            "version": "${{ steps.check-updates.outputs.latest_zhisong }}",
+            "updated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "source": "https://github.com/lxgw/LxgwNeoZhiSong"
+          },
+          "xihei": {
+            "version": "${{ steps.check-updates.outputs.latest_xihei }}",
+            "updated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "source": "https://github.com/lxgw/LxgwNeoXiHei"
+          }
+        }
+        EOF
+    
+    - name: 提交更新
+      if: steps.check-updates.outputs.zhisong_updated == 'true' || steps.check-updates.outputs.xihei_updated == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # 添加更新的文件
+        git add dissertation/font/*.woff2 font_versions.json
+        
+        # 检查是否有更改
+        if git diff --staged --quiet; then
+          echo "没有需要提交的更改"
+        else
+          # 创建提交信息
+          COMMIT_MSG="🔄 字体同步更新"
+          
+          if [ "${{ steps.check-updates.outputs.zhisong_updated }}" == "true" ]; then
+            COMMIT_MSG="$COMMIT_MSG\n- LXGWNeoZhiSong: ${{ steps.check-updates.outputs.latest_zhisong }}"
+          fi
+          
+          if [ "${{ steps.check-updates.outputs.xihei_updated }}" == "true" ]; then
+            COMMIT_MSG="$COMMIT_MSG\n- LXGWNeoXiHei: ${{ steps.check-updates.outputs.latest_xihei }}"
+          fi
+          
+          git commit -m "$COMMIT_MSG"
+          git push
+        fi
+    
+    - name: 清理临时文件
+      if: always()
+      run: |
+        rm -rf temp_fonts
+        rm -f .github/scripts/*.json 

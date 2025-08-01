@@ -1,0 +1,24 @@
+:root {
+    --code-linenumber-color: rgb(200, 200, 200);
+    --code-keyword: #f480ff;
+    --code-operator: #ffffff;
+    --code-variable: #82B1FF;
+    --code-variable-2: #90DBC4;
+    --code-variable-3: #92B1FF;
+    --code-builtin: #EECB6B;
+    --code-atom: #F77669;
+    --code-number: #F77669;
+    --code-def: #54c9b0;
+    --code-string: #D3E88D;
+    --code-string-2: #90CBC4;
+    --code-comment: #A8D8A8;
+    --code-tag: #90CBC4;
+    --code-meta: #90CBC4;
+    --code-attribute: #FFCB6B;
+    --code-property: #90CBAE;
+    --code-qualifier: #EECB6B;
+    --code-error: rgb(255, 255, 255);
+    --code-error-bg: #EC5F67;
+
+    --mermaid-theme: dark;
+}

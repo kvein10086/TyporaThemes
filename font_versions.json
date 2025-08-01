@@ -1,0 +1,12 @@
+{
+  "zhisong": {
+    "version": "unknown",
+    "updated_at": "2024-01-01T00:00:00Z",
+    "source": "https://github.com/lxgw/LxgwNeoZhiSong"
+  },
+  "xihei": {
+    "version": "unknown",
+    "updated_at": "2024-01-01T00:00:00Z",
+    "source": "https://github.com/lxgw/LxgwNeoXiHei"
+  }
+} 
