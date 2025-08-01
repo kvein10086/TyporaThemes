@@ -97,4 +97,3 @@ python convert_font.py input.ttf output.woff2
 1. 进入GitHub仓库的Actions页面
 2. 选择"字体同步更新"工作流
 3. 点击"Run workflow"按钮
-4. 选择分支并运行 
