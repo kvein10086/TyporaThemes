@@ -1,12 +1,12 @@
 {
   "zhisong": {
-    "version": "v1.033",
-    "updated_at": "2025-09-06T02:46:40Z",
+    "version": "v1.034",
+    "updated_at": "2025-09-09T02:56:40Z",
     "source": "https://github.com/lxgw/LxgwNeoZhiSong"
   },
   "xihei": {
-    "version": "v1.219",
-    "updated_at": "2025-09-06T02:46:40Z",
+    "version": "v1.220",
+    "updated_at": "2025-09-09T02:56:40Z",
     "source": "https://github.com/lxgw/LxgwNeoXiHei"
   }
 }
