@@ -26,7 +26,7 @@
 ### Typora 用户 (推荐)
 
 1. **下载主题包**
-   - 前往本项目的 [**最新发布页面 (Latest Release)**](https://github.com/kvein10086/TyporaThemes-Dissertation-1/releases/latest)。
+   - 前往本项目的 [**最新发布页面 (Latest Release)**](https://github.com/kvein10086/TyporaThemes-Dissertation/releases/latest)。
    - 下载页面下方的 `Typora-Dissertation-Theme-vX.X.X.zip` 压缩包。
 
 2. **解压并安装**
@@ -49,7 +49,7 @@
 
 ### 其他用途
 
-如果您想在其他项目中使用本样式系统，可以从 [最新发布页面 (Latest Release)](https://github.com/kvein10086/TyporaThemes-Dissertation-1/releases/latest) 下载最新的 `.zip` 包，解压后按需引入 `dissertation-f-l.css` 或 `dissertation-f-d.css`。请确保 `dissertation` 文件夹与 CSS 文件的相对路径正确。
+如果您想在其他项目中使用本样式系统，可以从 [最新发布页面 (Latest Release)](https://github.com/kvein10086/TyporaThemes-Dissertation/releases/latest) 下载最新的 `.zip` 包，解压后按需引入 `dissertation-f-l.css` 或 `dissertation-f-d.css`。请确保 `dissertation` 文件夹与 CSS 文件的相对路径正确。
 
 2. **应用主题**
    - 打开 Typora
@@ -333,7 +333,7 @@ dissertation-style/
 
 ## 📝 更新历史 (Changelog)
 
-本项目的所有版本发布，包括由字体更新触发的自动发布，都记录在 **[GitHub Releases](https://github.com/kvein10086/TyporaThemes-Dissertation-1/releases)** 页面。
+本项目的所有版本发布，包括由字体更新触发的自动发布，都记录在 **[GitHub Releases](https://github.com/kvein10086/TyporaThemes-Dissertation/releases)** 页面。
 
 请访问 Releases 页面查看详细的更新日志和下载特定版本的主题包。
 
