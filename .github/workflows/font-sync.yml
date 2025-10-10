@@ -1,4 +1,4 @@
-name: 字体同步更新
+name: 字体同步更新与发布
 
 on:
   schedule:
@@ -91,6 +91,7 @@ jobs:
         echo "latest_xihei=$LATEST_XIHEI" >> $GITHUB_OUTPUT
     
     - name: 下载并转换字体
+      id: download
       if: steps.check-updates.outputs.zhisong_updated == 'true' || steps.check-updates.outputs.xihei_updated == 'true'
       run: |
         mkdir -p temp_fonts
@@ -130,6 +131,7 @@ jobs:
         done
     
     - name: 更新版本信息
+      id: versioning
       if: steps.check-updates.outputs.zhisong_updated == 'true' || steps.check-updates.outputs.xihei_updated == 'true'
       run: |
         # 创建新的版本信息
@@ -149,6 +151,7 @@ jobs:
         EOF
     
     - name: 提交更新
+      id: commit
       if: steps.check-updates.outputs.zhisong_updated == 'true' || steps.check-updates.outputs.xihei_updated == 'true'
       run: |
         # 配置 Git 用户信息
@@ -161,6 +164,7 @@ jobs:
         # 检查是否有更改
         if git diff --staged --quiet; then
           echo "没有需要提交的更改"
+          echo "updated=false" >> $GITHUB_OUTPUT
         else
           # 创建提交信息
           COMMIT_MSG="🔄 字体同步更新"
@@ -179,14 +183,42 @@ jobs:
           # 尝试推送，如果失败则输出错误信息
           if ! git push; then
             echo "推送失败，请检查权限设置"
-            echo "当前分支: $(git branch --show-current)"
-            echo "远程仓库: $(git remote -v)"
             exit 1
           fi
+          echo "updated=true" >> $GITHUB_OUTPUT
         fi
-    
+
+    - name: 打包主题文件
+      if: steps.commit.outputs.updated == 'true'
+      id: package
+      run: |
+        TAG_NAME="v$(date -u +%Y.%m.%d.%H%M)"
+        ZIP_NAME="Typora-Dissertation-Theme-${TAG_NAME}.zip"
+        zip -r $ZIP_NAME dissertation-f-l.css dissertation-f-d.css dissertation/
+        echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT
+        echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_OUTPUT
+
+    - name: 创建 Release
+      if: steps.commit.outputs.updated == 'true'
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.package.outputs.TAG_NAME }}
+        name: 自动更新 - ${{ steps.package.outputs.TAG_NAME }}
+        body: |
+          **字体已自动更新**
+          ${{ steps.check-updates.outputs.zhisong_updated == 'true' && format('**- LXGWNeoZhiSong** 更新至版本: `{0}`', steps.check-updates.outputs.latest_zhisong) || '' }}
+          ${{ steps.check-updates.outputs.xihei_updated == 'true' && format('**- LXGWNeoXiHei** 更新至版本: `{0}`', steps.check-updates.outputs.latest_xihei) || '' }}
+
+          ---
+          ### 📥 安装方法
+          1. 下载下方的 `${{ steps.package.outputs.ZIP_NAME }}` 文件。
+          2. 解压文件。
+          3. 将解压后的 `dissertation-f-l.css`, `dissertation-f-d.css` 和整个 `dissertation` 文件夹复制到 Typora 的主题目录中。
+        files: ${{ steps.package.outputs.ZIP_NAME }}
+
     - name: 清理临时文件
       if: always()
       run: |
         rm -rf temp_fonts
-        rm -f .github/scripts/*.json 
+        rm -f .github/scripts/*.json
+        rm -f *.zip

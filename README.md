@@ -23,44 +23,33 @@
 
 ## 🚀 快速开始
 
-### 安装使用
+### Typora 用户 (推荐)
 
-1. **下载项目文件**
-   ```bash
-   git clone <repository-url>
-   cd dissertation-style
-   ```
+1. **下载主题包**
+   - 前往本项目的 [**最新发布页面 (Latest Release)**](https://github.com/kvein10086/TyporaThemes-Dissertation-1/releases/latest)。
+   - 下载页面下方的 `Typora-Dissertation-Theme-vX.X.X.zip` 压缩包。
 
-2. **选择主题并引入样式**
-   
-   **浅色主题：**
-   ```html
-   <link rel="stylesheet" href="dissertation-f-l.css">
-   ```
-   
-   **深色主题：**
-   ```html
-   <link rel="stylesheet" href="dissertation-f-d.css">
-   ```
+2. **解压并安装**
+   - 解压下载的 `.zip` 文件。
+   - 你会得到 `dissertation-f-l.css`, `dissertation-f-d.css` 和一个 `dissertation` 文件夹。
+   - 将这 **两个 .css 文件** 和 **整个 dissertation 文件夹** 一同复制到 Typora 的主题目录：
+     - **Windows:** `%APPDATA%\Typora\themes\`
+     - **macOS:** `~/Library/Application Support/abnerworks.Typora/themes/`
+     - **Linux:** `~/.config/Typora/themes/`
 
-3. **开始写作**
-   ```markdown
-   # 第一章 绪论
-   
-   ## 研究背景
-   
-   ### 问题提出
-   
-   这是正文内容，支持**粗体**、*斜体*等格式。
-   ```
+   > **重要提示**：必须将 `dissertation` 文件夹与 `.css` 文件放在同一目录下，否则主题将无法加载字体和模块而失效。
 
-### Typora 用户
+3. **应用主题**
+   - 重启 Typora。
+   - 进入 `文件` → `偏好设置` → `外观`。
+   - 在主题列表中选择 `dissertation-f-l` (浅色) 或 `dissertation-f-d` (深色)。
 
-1. **安装主题**
-   - 将 `dissertation-f-l.css` 或 `dissertation-f-d.css` 复制到 Typora 主题目录
-   - Windows: `%APPDATA%\Typora\themes\`
-   - macOS: `~/Library/Application Support/abnerworks.Typora/themes/`
-   - Linux: `~/.config/Typora/themes/`
+4. **开始写作**
+   - 享受专业的论文排版体验，支持实时预览和PDF导出。
+
+### 其他用途
+
+如果您想在其他项目中使用本样式系统，可以从 [最新发布页面 (Latest Release)](https://github.com/kvein10086/TyporaThemes-Dissertation-1/releases/latest) 下载最新的 `.zip` 包，解压后按需引入 `dissertation-f-l.css` 或 `dissertation-f-d.css`。请确保 `dissertation` 文件夹与 CSS 文件的相对路径正确。
 
 2. **应用主题**
    - 打开 Typora
@@ -249,6 +238,7 @@ dissertation-style/
 - **智能检测**：自动检测LXGWNeoZhiSong和LXGWNeoXiHei的最新版本
 - **格式转换**：自动将TTF格式转换为WOFF2格式，提升加载性能
 - **版本管理**：维护字体版本信息，记录更新历史
+- **自动发布**：字体更新后，会自动创建一个包含完整主题包（`.zip`）的 GitHub Release，方便用户下载使用。
 
 ### 监控的字体仓库
 - [LXGWNeoZhiSong](https://github.com/lxgw/LxgwNeoZhiSong) - 霞鹜新致宋
