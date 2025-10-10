@@ -27,7 +27,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.package.outputs.TAG_NAME }}
-          name: 手动发布 - ${{ steps.package.outputs.TAG_NAME }}
+          name: ${{ steps.package.outputs.TAG_NAME }}
           body: |
             这是一个手动触发的发布版本。
             它包含了当前仓库中最新的主题文件。

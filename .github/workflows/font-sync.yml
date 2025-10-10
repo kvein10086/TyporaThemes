@@ -203,7 +203,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.package.outputs.TAG_NAME }}
-        name: 自动更新 - ${{ steps.package.outputs.TAG_NAME }}
+        name: ${{ steps.package.outputs.TAG_NAME }}
         body: |
           **字体已自动更新**
           ${{ steps.check-updates.outputs.zhisong_updated == 'true' && format('**- LXGWNeoZhiSong** 更新至版本: `{0}`', steps.check-updates.outputs.latest_zhisong) || '' }}
