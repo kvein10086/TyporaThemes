@@ -1,0 +1,39 @@
+name: 手动发布
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Manual Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 打包主题文件
+        id: package
+        run: |
+          TAG_NAME="manual-v$(date -u +%Y.%m.%d.%H%M)"
+          ZIP_NAME="Typora-Dissertation-Theme-${TAG_NAME}.zip"
+          zip -r ${ZIP_NAME} dissertation-f-l.css dissertation-f-d.css dissertation/
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT
+          echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_OUTPUT
+
+      - name: 创建 Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.package.outputs.TAG_NAME }}
+          name: 手动发布 - ${{ steps.package.outputs.TAG_NAME }}
+          body: |
+            这是一个手动触发的发布版本。
+            它包含了当前仓库中最新的主题文件。
+          files: ${{ steps.package.outputs.ZIP_NAME }}
+
+      - name: 清理临时文件
+        if: always()
+        run: |
+          rm -f *.zip
